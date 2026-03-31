@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import { Mona_Sans, Manrope } from "next/font/google";
+import { Mona_Sans } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
-
-const manrope = Manrope({subsets:['latin'],variable:'--font-sans'});
+import { Toaster } from "sonner";
 
 const monaSans = Mona_Sans({
   variable: "--font-mona-sans",
@@ -11,7 +10,7 @@ const monaSans = Mona_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "PrepTalk",
+  title: "Interviewly",
   description: "Your AI-powered interview preparation platform",
 };
 
@@ -23,9 +22,12 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn("h-full", "antialiased", monaSans.className, "font-sans", manrope.variable)}
+      className="dark"
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className={`${monaSans.className} antialiased pattern`}>
+        {children}
+        <Toaster />
+      </body>
     </html>
   );
 }

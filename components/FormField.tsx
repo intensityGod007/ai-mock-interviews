@@ -1,0 +1,39 @@
+import React from 'react'
+import { Control, Controller, FieldValues, Path } from 'react-hook-form';
+import { Field, FieldError, FieldLabel } from './ui/field';
+import { Input } from './ui/input';
+
+interface FormFieldProps<T extends FieldValues> {
+    control: Control<T>;
+    name: Path<T>;
+    label: string;
+    placeholder?: string;
+    type?: "text" | "email" | "password" | "file";
+}
+
+const FormField = <T,>({ control, name, label, placeholder, type = "text" }: FormFieldProps<T>) => (
+    <Controller
+        name={name}
+        control={control}
+        render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+                <FieldLabel className='label'>
+                    {label}
+                </FieldLabel>
+                <Input
+                    {...field}
+                    aria-invalid={fieldState.invalid}
+                    placeholder={placeholder}
+                    type={type}
+                    autoComplete="off"
+                    className='input'
+                />
+                {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                )}
+            </Field>
+        )}
+    />
+);
+
+export default FormField
