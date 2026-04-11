@@ -1,38 +1,17 @@
 "use client"
 
-import * as React from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Controller, useForm } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import * as z from "zod"
-
 import { Button } from "@/components/ui/button"
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
-import {
-    Field,
-    FieldDescription,
-    FieldError,
-    FieldGroup,
-    FieldLabel,
-} from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import {
-    InputGroup,
-    InputGroupAddon,
-    InputGroupText,
-    InputGroupTextarea,
-} from "@/components/ui/input-group"
 import Image from "next/image"
 import Link from "next/link"
 import FormField from "./FormField"
 import { useRouter } from "next/navigation"
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth"
+import { auth } from "@/firebase/client"
+import { signIn, signUp } from "@/lib/actions/auth.actions"
 
 const authFormSchema = (type: FormType) => {
     return z.object({
@@ -55,14 +34,46 @@ export default function AuthForm({ type }: { type: FormType }) {
         },
     })
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
+    async function onSubmit(values: z.infer<typeof formSchema>) {
         try {
-            if (type === "sign-in") {
-                toast.success('Signed in successfully.');
-                router.push('/');
-            } else {
+            if (type === "sign-up") {
+                const { name, email, password } = values;
+
+                const userCredentials = await createUserWithEmailAndPassword(auth, email, password);
+
+                const result = await signUp({
+                    name: name!,
+                    email,
+                    uid: userCredentials.user.uid,
+                    password
+                });
+
+                if (!result?.success) {
+                    toast.error(result?.message || "Failed to sign in.");
+                    return;
+                }
+
                 toast.success('Account created successfully. Please sign in.');
                 router.push('/sign-in');
+            } else {
+                const { email, password } = values;
+
+                const userCredentials = await signInWithEmailAndPassword(auth, email, password);
+
+                const idToken = await userCredentials.user.getIdToken();
+
+                if (!idToken) {
+                    toast.error('Failed to sign in.');
+                    return;
+                }
+
+                await signIn({
+                    email,
+                    idToken
+                });
+
+                toast.success('Signed in successfully.');
+                router.push('/');
             }
         } catch (error) {
             console.log(error);
@@ -75,7 +86,7 @@ export default function AuthForm({ type }: { type: FormType }) {
     const isSignIn = type === "sign-in";
 
     return (
-        <div className="card-border lg:min-w-[566px]">
+        <div className="card-border lg:min-w-141.5">
             <div className="flex flex-col items-center gap-6 card py-14 px-10">
                 <div className="flex flex-row gap-2 justify-center">
                     <Image src="/logo.svg" alt="logo" width={38} height={32} />
