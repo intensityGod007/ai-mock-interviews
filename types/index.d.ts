@@ -1,6 +1,6 @@
 interface Feedback {
   id: string;
-  interviewId: string;
+  id: string;
   totalScore: number;
   categoryScores: Array<{
     name: string;
@@ -26,7 +26,7 @@ interface Interview {
 }
 
 interface CreateFeedbackParams {
-  interviewId: string;
+  id: string;
   userId: string;
   transcript: { role: string; content: string }[];
   feedbackId?: string;
@@ -39,7 +39,7 @@ interface User {
 }
 
 interface InterviewCardProps {
-  interviewId?: string;
+  id?: string;
   userId?: string;
   role: string;
   type: string;
@@ -61,8 +61,8 @@ interface RouteParams {
   searchParams: Promise<Record<string, string>>;
 }
 
-interface GetFeedbackByInterviewIdParams {
-  interviewId: string;
+interface GetFeedbackByidParams {
+  id: string;
   userId: string;
 }
 
@@ -86,7 +86,7 @@ interface SignUpParams {
 type FormType = "sign-in" | "sign-up";
 
 interface InterviewFormProps {
-  interviewId: string;
+  id: string;
   role: string;
   level: string;
   type: string;
