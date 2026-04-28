@@ -26,7 +26,7 @@ interface Interview {
 }
 
 interface CreateFeedbackParams {
-  id: string;
+  interviewId: string;
   userId: string;
   transcript: { role: string; content: string }[];
   feedbackId?: string;
@@ -61,8 +61,8 @@ interface RouteParams {
   searchParams: Promise<Record<string, string>>;
 }
 
-interface GetFeedbackByidParams {
-  id: string;
+interface GetFeedbackByInterviewIdParams {
+  interviewId: string;
   userId: string;
 }
 
